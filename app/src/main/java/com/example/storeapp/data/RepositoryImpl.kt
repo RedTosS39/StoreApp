@@ -1,26 +1,49 @@
 package com.example.storeapp.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.storeapp.domain.Repository
 import com.example.storeapp.domain.model.ShopItem
 
-class RepositoryImpl : Repository {
+object RepositoryImpl : Repository {
+
+    private val shopListLiveData = MutableLiveData<List<ShopItem>>()
+    private val shopList = mutableListOf<ShopItem>()
+    private var autoIncrementIt = 0
+
     override fun addShopItem(shopItem: ShopItem) {
-        TODO("Not yet implemented")
+        if (shopItem.id == ShopItem.UNDEFINED_ID) {
+            shopItem.id = autoIncrementIt++
+        }
+
+        shopList.add(shopItem)
+        updateList()
     }
 
     override fun deleteShopItem(shopItem: ShopItem) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getShopList() : List<ShopItem> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getShopItem(shopItem: ShopItem) : ShopItem {
-        return shopItem
+        shopList.remove(shopItem)
+        updateList()
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        TODO("Not yet implemented")
+        val oldShopItem = getShopItem(shopItem.id)
+        shopList.remove(oldShopItem)
+        autoIncrementIt++
+        addShopItem(shopItem)
+    }
+
+    override fun getShopItem(shopItemId: Int): ShopItem {
+        return shopList.find {
+            it.id == shopItemId
+        } ?: throw RuntimeException("Element with id: $shopItemId not found")
+    }
+
+    override fun getShopList(): LiveData<List<ShopItem>> {
+        return shopListLiveData
+    }
+
+    private fun updateList() {
+
+        shopListLiveData.postValue(shopList.toList())
     }
 }

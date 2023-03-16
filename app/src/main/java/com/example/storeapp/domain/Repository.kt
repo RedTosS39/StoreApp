@@ -1,5 +1,6 @@
 package com.example.storeapp.domain
 
+import androidx.lifecycle.LiveData
 import com.example.storeapp.domain.model.ShopItem
 
 interface Repository {
@@ -8,9 +9,9 @@ interface Repository {
 
     fun deleteShopItem(shopItem: ShopItem)
 
-    fun getShopList() : List<ShopItem>
-
-    fun getShopItem(shopItem: ShopItem) : ShopItem
-
     fun editShopItem(shopItem: ShopItem)
+
+    fun getShopItem(shopItemId: Int) : ShopItem
+
+    fun getShopList() : LiveData<List<ShopItem>>
 }
