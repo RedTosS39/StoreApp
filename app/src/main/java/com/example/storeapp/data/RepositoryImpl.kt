@@ -8,7 +8,7 @@ import com.example.storeapp.domain.model.ShopItem
 object RepositoryImpl : Repository {
 
     private val shopListLiveData = MutableLiveData<List<ShopItem>>()
-    private val shopList = mutableListOf<ShopItem>()
+    private val shopList = sortedSetOf(Comparator<ShopItem> { o1, o2 -> o1.id.compareTo(o2.id) })
     private var autoIncrementIt = 0
 
     override fun addShopItem(shopItem: ShopItem) {
