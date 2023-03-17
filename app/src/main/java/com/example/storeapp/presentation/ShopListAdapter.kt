@@ -10,28 +10,38 @@ import com.example.storeapp.domain.model.ShopItem
 
 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
 
-    private val list = listOf<ShopItem>()
+     var shopList = listOf<ShopItem>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
-    class ShopItemViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val tvName = view.findViewById<TextView>(R.id.tv_name)
-        val tvCount = view.findViewById<TextView>(R.id.tv_count)
+    class ShopItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvName: TextView = view.findViewById(R.id.tv_name)
+        val tvCount: TextView = view.findViewById(R.id.tv_count)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_shop_enabled, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_shop_enabled,
+                parent,
+                false
+            )
         return ShopItemViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
-        val shopItem = list[position]
-        holder.tvCount.text = shopItem.count.toString()
-        holder.tvName.text = shopItem.name
+        holder.tvCount.text = shopList[position].id.toString()
+        holder.tvName.text = shopList[position].name
         holder.itemView.setOnLongClickListener {
             true
         }
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return shopList.size
     }
+
+
 }
