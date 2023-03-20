@@ -10,14 +10,19 @@ object RepositoryImpl : Repository {
 
     private val shopListLiveData = MutableLiveData<List<ShopItem>>()
     private var shopList = sortedSetOf(Comparator<ShopItem> { o1, o2 -> o1.id.compareTo(o2.id) })
-
     private var autoIncrementIt = 0
+
+    init  {
+        for (i in 0 until  100) {
+            val item = ShopItem("Item", i, Random.nextBoolean())
+            addShopItem(item)
+        }
+    }
 
     override fun addShopItem(shopItem: ShopItem) {
         if (shopItem.id == ShopItem.UNDEFINED_ID) {
             shopItem.id = autoIncrementIt++
         }
-
         shopList.add(shopItem)
         updateList()
     }
@@ -41,23 +46,11 @@ object RepositoryImpl : Repository {
     }
 
     override fun getShopList(): LiveData<List<ShopItem>> {
-
-        val testlist = mutableListOf<ShopItem>()
-        for (i in 0 .. 100) {
-            val item = ShopItem("Element", autoIncrementIt, Random.nextBoolean())
-            if (item.id == ShopItem.UNDEFINED_ID) {
-                item.id = autoIncrementIt++
-            }
-            testlist.add(item)
-        }
-
-        shopListLiveData.postValue(testlist.toList())
-
+        shopListLiveData.postValue(shopList.toList())
         return shopListLiveData
     }
 
     private fun updateList() {
-
         shopListLiveData.postValue(shopList.toList())
     }
 }
