@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         with(recyclerView) {
             shopListAdapter = ShopListAdapter()
             adapter = shopListAdapter
-            setMaxRecycledViews(Constants.VIEW_TYPE_ENABLED, Constants.MAX_POOL_SIZE)
-            setMaxRecycledViews(Constants.VIEW_TYPE_DISABLED, Constants.MAX_POOL_SIZE)
+            setMaxRecycledViews(Constants.VIEW_TYPE_ENABLED)
+            setMaxRecycledViews(Constants.VIEW_TYPE_DISABLED)
         }
 
         setupLongClickListener()
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setMaxRecycledViews(viewType: Int, poolSize: Int) {
+    private fun setMaxRecycledViews(viewType: Int) {
         recyclerView.recycledViewPool.setMaxRecycledViews(viewType, Constants.MAX_POOL_SIZE)
     }
 }
