@@ -19,6 +19,4 @@ class ShopListDiffCallback(private val oldList: List<ShopItem>,private val  newL
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldList == newList
     }
-
-
 }
