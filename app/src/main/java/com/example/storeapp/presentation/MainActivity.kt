@@ -1,32 +1,41 @@
 package com.example.storeapp.presentation
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private lateinit var fab: FloatingActionButton
     lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        init()
         setupRecyclerView()
+        setupFab()
 
-        viewModel = ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
+
+
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
-
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun init() {
         recyclerView = findViewById(R.id.recycler)
+        fab = findViewById(R.id.floating_action_button)
+        viewModel = ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
+    }
+
+    private fun setupRecyclerView() {
+
         with(recyclerView) {
             shopListAdapter = ShopListAdapter()
             adapter = shopListAdapter
@@ -36,7 +45,6 @@ class MainActivity : AppCompatActivity() {
 
         setupLongClickListener()
         setupClickListener()
-
         setupSwipeListener(recyclerView)
     }
 
@@ -59,11 +67,16 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
+    private fun setupFab() {
+        fab.setOnClickListener {
+            val intent = ShopItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
+    }
     private fun setupClickListener() {
         shopListAdapter.onShopItemShortClick = {
-            Toast.makeText(this@MainActivity, "You clicked at ${it.count}", Toast.LENGTH_SHORT)
-                .show()
-
+            val intent = ShopItemActivity.newIntentEditItem(this@MainActivity, it.id)
+            startActivity(intent)
         }
     }
 

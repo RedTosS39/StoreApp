@@ -1,10 +1,11 @@
 package com.example.storeapp.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.storeapp.data.RepositoryImpl
-import com.example.storeapp.domain.*
+import com.example.storeapp.domain.DeleteShopItemUseCase
+import com.example.storeapp.domain.EditShopItemUseCase
+import com.example.storeapp.domain.GetShopListUseCase
+import com.example.storeapp.domain.Repository
 import com.example.storeapp.domain.model.ShopItem
 
 class MainViewModel() : ViewModel() {
@@ -18,7 +19,6 @@ class MainViewModel() : ViewModel() {
 
     fun deleteShopItem(shopItem: ShopItem) {
         deleteShopItemUseCase.deleteShopItem(shopItem)
-
     }
 
     fun changeEnableState(shopItem: ShopItem) {
