@@ -31,27 +31,37 @@ class ShopItemActivity : AppCompatActivity() {
         parseIntent()
         viewModel = ViewModelProvider(this@ShopItemActivity)[ShopItemViewModel::class.java]
         initViews()
+        addChangeTextListeners()
+        launchMode()
+        observeViewModel()
 
+    }
 
-        when (screenMode) {
-            MODE_ADD -> { launchAddMode() }
-            MODE_EDIT -> { launchEditMode() }
-        }
-
+    private fun observeViewModel() {
         viewModel.inputCountError.observe(this) {
-            val massage = if(it) {
+            val massage = if (it) {
                 getString(R.string.error_input_count)
             } else {
                 null
             }
+            tilCount.error = massage
         }
         viewModel.inputNameError.observe(this) {
 
-            val massage = if(it) {
+            val massage = if (it) {
                 getString(R.string.error_input_name)
             } else {
                 null
             }
+
+            tilName.error = massage
+        }
+    }
+
+    private fun launchMode() {
+        when (screenMode) {
+            MODE_ADD -> { launchAddMode() }
+            MODE_EDIT -> { launchEditMode() }
         }
 
     }
@@ -68,6 +78,10 @@ class ShopItemActivity : AppCompatActivity() {
             val count = inputEditTextCount.text?.toString()
             viewModel.editShopItem(name, count)
         }
+
+        viewModel.shouldCloseScreen.observe(this) {
+            finish()
+        }
     }
 
     private fun launchAddMode() {
@@ -76,35 +90,37 @@ class ShopItemActivity : AppCompatActivity() {
             val count = inputEditTextCount.text.toString()
             viewModel.addShopItem(name, count)
         }
+
+        viewModel.shouldCloseScreen.observe(this) {
+            finish()
+        }
     }
 
-    private fun setupTextWatchers() {
+    private fun addChangeTextListeners() {
         inputEditTextName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                tilCount.error = "Error"
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                TODO("Not yet implemented")
+                viewModel.resetInputNameError()
             }
 
             override fun afterTextChanged(s: Editable?) {
-                TODO("Not yet implemented")
+
             }
 
         })
 
         inputEditTextCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                tilCount.error = "Error"
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                TODO("Not yet implemented")
+                viewModel.resetInputNameError()
             }
 
             override fun afterTextChanged(s: Editable?) {
-                TODO("Not yet implemented")
+
             }
 
         })
@@ -133,7 +149,7 @@ class ShopItemActivity : AppCompatActivity() {
             if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
                 throw RuntimeException("EXTRA_SHOP_ITEM_ID Param doesn't has ID")
             } else {
-                shopItemId = intent.getIntExtra(MODE_EDIT, ShopItem.UNDEFINED_ID)
+                shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
             }
         }
     }
@@ -154,7 +170,7 @@ class ShopItemActivity : AppCompatActivity() {
         fun newIntentEditItem(context: Context, shopItemId: Int): Intent {
             val intent = Intent(context, ShopItemActivity::class.java)
             intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
-            intent.putExtra(EXTRA_SCREEN_MODE, shopItemId)
+            intent.putExtra(EXTRA_SHOP_ITEM_ID, shopItemId)
             return intent
         }
     }
