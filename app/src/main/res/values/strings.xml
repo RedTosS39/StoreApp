@@ -3,4 +3,6 @@
     <string name="btn_save_text">save</string>
     <string name="et_hint_count">count</string>
     <string name="et_text_name">name</string>
+    <string name="error_input_count">Wrong count</string>
+    <string name="error_input_name">Wrong name</string>
 </resources>

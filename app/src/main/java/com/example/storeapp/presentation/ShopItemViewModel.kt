@@ -44,7 +44,6 @@ class ShopItemViewModel : ViewModel() {
                 val newShopItem = it.copy(name = name, count = count)
                 editShopItemUseCase.editShopItem(newShopItem)
             }
-
             isFinished()
         }
     }
@@ -58,7 +57,6 @@ class ShopItemViewModel : ViewModel() {
             val shopItem = ShopItem(name, count, true)
             addShopItemUseCase.addShopItem(shopItem)
             isFinished()
-
         }
     }
 
