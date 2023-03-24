@@ -1,6 +1,7 @@
 package com.example.storeapp.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,8 +21,6 @@ class MainActivity : AppCompatActivity() {
         init()
         setupRecyclerView()
         setupFab()
-
-
 
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
