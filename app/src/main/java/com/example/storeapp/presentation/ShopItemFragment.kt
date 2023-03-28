@@ -17,7 +17,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment : Fragment() {
-
     private lateinit var viewModel: ShopItemViewModel
     lateinit var tilName: TextInputLayout
     lateinit var tilCount: TextInputLayout
@@ -45,7 +44,7 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.inputCountError.observe(this) {
+        viewModel.inputCountError.observe(viewLifecycleOwner) {
             val massage = if (it) {
                 getString(R.string.error_input_count)
             } else {
@@ -53,7 +52,7 @@ class ShopItemFragment : Fragment() {
             }
             tilCount.error = massage
         }
-        viewModel.inputNameError.observe(this) {
+        viewModel.inputNameError.observe(viewLifecycleOwner) {
 
             val massage = if (it) {
                 getString(R.string.error_input_name)
@@ -79,7 +78,7 @@ class ShopItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItem.observe(this) {
+        viewModel.shopItem.observe(viewLifecycleOwner) {
             inputEditTextName.setText(it.name)
             inputEditTextCount.setText(it.count.toString())
         }
@@ -91,7 +90,7 @@ class ShopItemFragment : Fragment() {
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            finish()
+//            finish()
         }
     }
 
@@ -103,7 +102,7 @@ class ShopItemFragment : Fragment() {
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            finish()
+//            finish()
         }
     }
 
@@ -149,23 +148,23 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun parseParams() {
-        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
-            throw RuntimeException("Param of screen mode is absent")
-        }
-
-        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
-        if (mode != MODE_EDIT && mode != MODE_ADD) {
-            throw RuntimeException("Unknown screen mode $mode")
-        }
-
-        screenMode = mode
-        if (screenMode == MODE_EDIT) {
-            if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
-                throw RuntimeException("EXTRA_SHOP_ITEM_ID Param doesn't has ID")
-            } else {
-                shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
-            }
-        }
+//        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
+//            throw RuntimeException("Param of screen mode is absent")
+//        }
+//
+//        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+//        if (mode != MODE_EDIT && mode != MODE_ADD) {
+//            throw RuntimeException("Unknown screen mode $mode")
+//        }
+//
+//        screenMode = mode
+//        if (screenMode == MODE_EDIT) {
+//            if (!intent.hasExtra(EXTRA_SHOP_ITEM_ID)) {
+//                throw RuntimeException("EXTRA_SHOP_ITEM_ID Param doesn't has ID")
+//            } else {
+//                shopItemId = intent.getIntExtra(EXTRA_SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
+//            }
+//        }
     }
 
     companion object {
