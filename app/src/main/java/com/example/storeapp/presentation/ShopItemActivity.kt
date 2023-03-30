@@ -23,7 +23,6 @@ class ShopItemActivity : AppCompatActivity() {
 
     private fun launchMode() {
 
-
         val fragment = when (screenMode) {
             MODE_EDIT -> { ShopItemFragment.newInstanceEditItem(shopItemId) }
             MODE_ADD -> { ShopItemFragment.newInstanceAddItem() }
