@@ -1,8 +1,9 @@
 package com.example.storeapp.presentation
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +14,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
+    private var shopItemContainer: FragmentContainerView? = null
+    private var fragment: ShopItemFragment? = null
     private lateinit var fab: FloatingActionButton
     lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        shopItemContainer = findViewById(R.id.shop_item_container)
         init()
         setupRecyclerView()
         setupFab()
@@ -27,10 +31,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun init() {
-        recyclerView = findViewById(R.id.recycler)
-        fab = findViewById(R.id.floating_action_button)
-        viewModel = ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager
+            .beginTransaction()
+            .add(R.id.shop_item_container, fragment)
+            .commit()
+    }
+
+    private fun isOnePaneMode(): Boolean {
+        return shopItemContainer == null
     }
 
     private fun setupRecyclerView() {
@@ -68,14 +78,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFab() {
         fab.setOnClickListener {
-            val intent = ShopItemActivity.newIntentAddItem(this)
-            startActivity(intent)
+            if(isOnePaneMode()) {
+                fragment = ShopItemFragment.newInstanceAddItem()
+                val intent = ShopItemActivity.newIntentAddItem(this)
+                startActivity(intent)
+            } else {
+                launchFragment(ShopItemFragment.newInstanceAddItem())
+            }
         }
     }
+
     private fun setupClickListener() {
         shopListAdapter.onShopItemShortClick = {
-            val intent = ShopItemActivity.newIntentEditItem(this@MainActivity, it.id)
-            startActivity(intent)
+            if (isOnePaneMode()) {
+                val intent = ShopItemActivity.newIntentEditItem(this@MainActivity, it.id)
+                startActivity(intent)
+            } else {
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+            }
         }
     }
 
@@ -87,5 +107,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setMaxRecycledViews(viewType: Int) {
         recyclerView.recycledViewPool.setMaxRecycledViews(viewType, Constants.MAX_POOL_SIZE)
+    }
+
+    private fun init() {
+        recyclerView = findViewById(R.id.recycler)
+        fab = findViewById(R.id.floating_action_button)
+        viewModel = ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
     }
 }
