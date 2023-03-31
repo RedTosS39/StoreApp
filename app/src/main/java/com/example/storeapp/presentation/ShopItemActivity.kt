@@ -9,7 +9,7 @@ import android.widget.Toast
 import com.example.storeapp.R
 import com.example.storeapp.domain.model.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -18,22 +18,21 @@ class ShopItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-        launchMode(savedInstanceState)
+        if(savedInstanceState == null) {
+            launchMode()
+        }
     }
 
-    private fun launchMode(savedInstanceState: Bundle?) {
+    private fun launchMode() {
 
         val fragment = when (screenMode) {
             MODE_EDIT -> { ShopItemFragment.newInstanceEditItem(shopItemId) }
             MODE_ADD -> { ShopItemFragment.newInstanceAddItem() }
             else -> { throw RuntimeException("Unknown screen mode $screenMode") }
         }
-        if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.shop_item_container, fragment)
                 .commit()
-        }
-
     }
 
     private fun parseIntent() {
@@ -74,5 +73,9 @@ class ShopItemActivity : AppCompatActivity() {
 
             return intent
         }
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@ShopItemActivity, "Success", Toast.LENGTH_SHORT).show()
     }
 }

@@ -27,10 +27,16 @@ class ShopItemFragment(
     private lateinit var button: Button
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+    private lateinit var onEditingFinishedListener:  OnEditingFinishedListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d("checkFun", "onAttach: ")
+        if(context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Activity must implement listener")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,7 +131,7 @@ class ShopItemFragment(
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -137,7 +143,7 @@ class ShopItemFragment(
         }
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -196,6 +202,10 @@ class ShopItemFragment(
         inputEditTextName = view.findViewById(R.id.et_name)
         inputEditTextCount = view.findViewById(R.id.et_count)
         button = view.findViewById(R.id.button_save)
+    }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
     }
 
     companion object {
