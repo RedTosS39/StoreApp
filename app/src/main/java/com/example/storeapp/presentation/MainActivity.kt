@@ -23,8 +23,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         shopItemContainer = findViewById(R.id.shop_item_container)
         init()
-        setupRecyclerView()
-        setupFab()
+        setupRecyclerView(savedInstanceState)
+        setupFab(savedInstanceState)
 
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
@@ -32,18 +32,20 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun launchFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.shop_item_container, fragment)
-            .commit()
+    private fun launchFragment(fragment: Fragment, savedInstanceState: Bundle?) {
+
+        if(savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.shop_item_container, fragment)
+                .commit()
+        }
     }
 
     private fun isOnePaneMode(): Boolean {
         return shopItemContainer == null
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(savedInstanceState: Bundle?) {
 
         with(recyclerView) {
             shopListAdapter = ShopListAdapter()
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupLongClickListener()
-        setupClickListener()
+        setupClickListener(savedInstanceState)
         setupSwipeListener(recyclerView)
     }
 
@@ -76,25 +78,25 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun setupFab() {
+    private fun setupFab(savedInstanceState: Bundle?) {
         fab.setOnClickListener {
             if(isOnePaneMode()) {
                 fragment = ShopItemFragment.newInstanceAddItem()
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {
-                launchFragment(ShopItemFragment.newInstanceAddItem())
+                launchFragment(ShopItemFragment.newInstanceAddItem(), savedInstanceState)
             }
         }
     }
 
-    private fun setupClickListener() {
+    private fun setupClickListener(savedInstanceState: Bundle?) {
         shopListAdapter.onShopItemShortClick = {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentEditItem(this@MainActivity, it.id)
                 startActivity(intent)
             } else {
-                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id), savedInstanceState)
             }
         }
     }
