@@ -1,6 +1,7 @@
 package com.example.storeapp.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -11,20 +12,21 @@ import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private var shopItemContainer: FragmentContainerView? = null
     private var fragment: ShopItemFragment? = null
     private lateinit var fab: FloatingActionButton
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         shopItemContainer = findViewById(R.id.shop_item_container)
         init()
-        setupRecyclerView(savedInstanceState)
-        setupFab(savedInstanceState)
+        setupRecyclerView()
+        setupFab()
 
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
@@ -32,20 +34,19 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun launchFragment(fragment: Fragment, savedInstanceState: Bundle?) {
-
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.shop_item_container, fragment)
-                .commit()
-        }
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun isOnePaneMode(): Boolean {
         return shopItemContainer == null
     }
 
-    private fun setupRecyclerView(savedInstanceState: Bundle?) {
+    private fun setupRecyclerView() {
 
         with(recyclerView) {
             shopListAdapter = ShopListAdapter()
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupLongClickListener()
-        setupClickListener(savedInstanceState)
+        setupClickListener()
         setupSwipeListener(recyclerView)
     }
 
@@ -78,25 +79,29 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun setupFab(savedInstanceState: Bundle?) {
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setupFab() {
         fab.setOnClickListener {
-            if(isOnePaneMode()) {
+            if (isOnePaneMode()) {
                 fragment = ShopItemFragment.newInstanceAddItem()
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {
-                launchFragment(ShopItemFragment.newInstanceAddItem(), savedInstanceState)
+                launchFragment(ShopItemFragment.newInstanceAddItem())
             }
         }
     }
 
-    private fun setupClickListener(savedInstanceState: Bundle?) {
+    private fun setupClickListener() {
         shopListAdapter.onShopItemShortClick = {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentEditItem(this@MainActivity, it.id)
                 startActivity(intent)
             } else {
-                launchFragment(ShopItemFragment.newInstanceEditItem(it.id), savedInstanceState)
+                launchFragment(ShopItemFragment.newInstanceEditItem(it.id))
             }
         }
     }
@@ -116,4 +121,6 @@ class MainActivity : AppCompatActivity() {
         fab = findViewById(R.id.floating_action_button)
         viewModel = ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
     }
+
+
 }
