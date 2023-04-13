@@ -53,6 +53,4 @@ object RepositoryImpl : Repository {
     private fun updateList() {
         shopListLiveData.postValue(shopList.toList())
     }
-
-
 }
