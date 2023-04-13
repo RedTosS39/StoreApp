@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.example.storeapp.R
+import com.example.storeapp.databinding.ActivityMainBinding
 import com.example.storeapp.domain.model.ShopItem
 
 class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
-
     private var screenMode = MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
