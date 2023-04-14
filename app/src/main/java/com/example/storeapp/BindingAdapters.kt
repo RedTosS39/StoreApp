@@ -1,13 +1,16 @@
 package com.example.storeapp
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
-interface SetupText {
+interface ShouldBeClose {
 
-    fun setupText(name: String)
+    fun close()
 }
 
 @BindingAdapter("setTextFromEditText")
@@ -32,4 +35,10 @@ fun bindInputCountError(inputTextInputLayout: TextInputLayout, inputCount: Boole
         null
     }
     inputTextInputLayout.error = massage
+}
+
+
+@BindingAdapter("setCloseButton")
+fun bindCloseButton(button: Button,shouldBeClose: ShouldBeClose ) {
+    shouldBeClose.close()
 }
