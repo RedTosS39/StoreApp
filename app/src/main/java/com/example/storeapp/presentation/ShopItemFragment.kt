@@ -4,18 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.storeapp.R
 import com.example.storeapp.databinding.FragmentShopItemBinding
 import com.example.storeapp.domain.model.ShopItem
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null
@@ -28,12 +23,12 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
-    private lateinit var onEditingFinishedListener:  OnEditingFinishedListener
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if(context is OnEditingFinishedListener) {
+        if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
             throw RuntimeException("Activity must implement listener")
@@ -46,7 +41,7 @@ class ShopItemFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentShopItemBinding.inflate(inflater, container, false)
         return binding.root
@@ -59,33 +54,12 @@ class ShopItemFragment : Fragment() {
 
         addChangeTextListeners()
         launchRightMode()
-//        observeViewModel()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
-//    private fun observeViewModel() {
-//        viewModel.inputCountError.observe(viewLifecycleOwner) {
-//            val massage = if (it) {
-//                getString(R.string.error_input_count)
-//            } else {
-//                null
-//            }
-//            binding.tilCount.error = massage
-//        }
-//        viewModel.inputNameError.observe(viewLifecycleOwner) {
-//
-//            val massage = if (it) {
-//                getString(R.string.error_input_name)
-//            } else {
-//                null
-//            }
-//            binding.tilName.error = massage
-//        }
-//    }
 
     private fun launchRightMode() {
         when (screenMode) {
@@ -96,10 +70,10 @@ class ShopItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItem.observe(viewLifecycleOwner) {
-            binding.etName.setText(it.name)
-            binding.etCount.setText(it.count.toString())
-        }
+//        viewModel.shopItem.observe(viewLifecycleOwner) {
+//            binding.etName.setText(it.name)
+//            binding.etCount.setText(it.count.toString())
+//        }
 
         binding.buttonSave.setOnClickListener {
             val name = binding.etName.text.toString()
@@ -118,10 +92,6 @@ class ShopItemFragment : Fragment() {
             val name = binding.etName.text.toString()
             val count = binding.etCount.text.toString()
             viewModel.addShopItem(name, count)
-        }
-
-        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            onEditingFinishedListener.onEditingFinished()
         }
     }
 

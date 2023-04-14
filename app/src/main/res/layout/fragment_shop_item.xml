@@ -22,6 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_marginStart="8dp"
+
+            app:errorInputName="@{viewModel.inputNameError}"
             app:layout_constraintBottom_toTopOf="@+id/til_count"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,10 +34,10 @@
                 android:id="@+id/et_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:hint="@string/et_text_name"
+
                 android:inputType="textCapWords"
-                app:errorInputName="@{viewModel.inputNameError}" />
+                android:text="@{viewModel.shopItem.name}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -43,6 +45,8 @@
             android:id="@+id/til_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+
+            app:errorInputCount="@{viewModel.inputCountError}"
             app:layout_constraintBottom_toTopOf="@+id/button_save"
             app:layout_constraintEnd_toEndOf="@+id/til_name"
             app:layout_constraintStart_toStartOf="@+id/til_name"
@@ -52,10 +56,9 @@
                 android:id="@+id/et_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:hint="@string/et_hint_count"
                 android:inputType="number"
-                app:errorInputCount="@{viewModel.inputCountError}" />
+                android:text="@{String.valueOf(viewModel.shopItem.count)}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +72,8 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/til_count"
-            app:layout_constraintStart_toStartOf="@+id/til_count" />
+            app:layout_constraintStart_toStartOf="@+id/til_count"
+            app:setCloseButton="@{()->viewModel.shouldCloseScreen}" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,12 +53,10 @@ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCa
 
         when (binding) {
             is ItemShopDisabledBinding -> {
-                binding.tvCount.text = shopItem.id.toString()
-                binding.tvName.text = shopItem.name
+                binding.shopItem = shopItem
             }
             is ItemShopEnabledBinding -> {
-                binding.tvCount.text = shopItem.id.toString()
-                binding.tvName.text = shopItem.name
+                binding.shopItem = shopItem
             }
         }
         binding.root.setOnLongClickListener {

@@ -10,7 +10,7 @@ import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
 import com.example.storeapp.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel by lazy {
         ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
@@ -78,9 +78,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    override fun onEditingFinished() {
-        viewModel
-    }
+
 
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
