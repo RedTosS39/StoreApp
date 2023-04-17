@@ -1,13 +1,11 @@
-package com.example.storeapp.presentation
+package com.example.storeapp.presentation.view
 
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import com.example.storeapp.R
-import com.example.storeapp.databinding.ActivityMainBinding
 import com.example.storeapp.domain.model.ShopItem
 
 class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -26,8 +24,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     private fun launchMode() {
 
         val fragment = when (screenMode) {
-            MODE_EDIT -> { ShopItemFragment.newInstanceEditItem(shopItemId) }
-            MODE_ADD -> { ShopItemFragment.newInstanceAddItem() }
+            MODE_EDIT -> {
+                ShopItemFragment.newInstanceEditItem(shopItemId)
+            }
+            MODE_ADD -> {
+                ShopItemFragment.newInstanceAddItem()
+            }
             else -> { throw RuntimeException("Unknown screen mode $screenMode") }
         }
             supportFragmentManager.beginTransaction()

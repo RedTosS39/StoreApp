@@ -1,4 +1,4 @@
-package com.example.storeapp.presentation
+package com.example.storeapp.presentation.view
 
 import android.content.Context
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.storeapp.databinding.FragmentShopItemBinding
 import com.example.storeapp.domain.model.ShopItem
+import com.example.storeapp.presentation.viewmodel.ShopItemViewModel
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null

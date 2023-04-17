@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/shopItemFragment"
-        android:name="com.example.storeapp.presentation.ShopItemFragment"
+        android:name="com.example.storeapp.presentation.view.ShopItemFragment"
         android:label="ShopItemFragment" />
     <navigation android:id="@+id/navigation">
         <action
@@ -16,7 +16,7 @@
     </navigation>
     <activity
         android:id="@+id/mainActivity2"
-        android:name="com.example.storeapp.presentation.MainActivity"
+        android:name="com.example.storeapp.presentation.view.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
 </navigation>

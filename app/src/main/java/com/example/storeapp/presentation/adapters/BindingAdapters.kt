@@ -1,10 +1,8 @@
-package com.example.storeapp
+package com.example.storeapp.presentation.adapters
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Button
-import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.example.storeapp.R
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 

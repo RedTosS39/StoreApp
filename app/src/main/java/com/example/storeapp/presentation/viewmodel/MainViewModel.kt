@@ -1,4 +1,4 @@
-package com.example.storeapp.presentation
+package com.example.storeapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.storeapp.data.RepositoryImpl
