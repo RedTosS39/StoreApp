@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        init()
         setupRecyclerView()
         setupFab()
 
@@ -114,10 +113,4 @@ class MainActivity : AppCompatActivity() {
     private fun setMaxRecycledViews(viewType: Int) {
         binding.recycler.recycledViewPool.setMaxRecycledViews(viewType, Constants.MAX_POOL_SIZE)
     }
-
-    private fun init() {
-
-    }
-
-
 }

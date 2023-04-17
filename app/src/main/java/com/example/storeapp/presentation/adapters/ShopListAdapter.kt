@@ -11,7 +11,6 @@ import com.example.storeapp.constats.Constants.VIEW_TYPE_ENABLED
 import com.example.storeapp.databinding.ItemShopDisabledBinding
 import com.example.storeapp.databinding.ItemShopEnabledBinding
 import com.example.storeapp.domain.model.ShopItem
-import com.example.storeapp.presentation.viewmodel.ShopItemViewHolder
 
 class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 

@@ -79,5 +79,6 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
 
     override fun onEditingFinished() {
         Toast.makeText(this@ShopItemActivity, "Success", Toast.LENGTH_SHORT).show()
+
     }
 }

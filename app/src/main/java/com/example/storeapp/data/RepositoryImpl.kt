@@ -5,26 +5,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.example.storeapp.domain.Repository
 import com.example.storeapp.domain.model.ShopItem
+import kotlinx.coroutines.coroutineScope
 
 class RepositoryImpl(application: Application) : Repository {
 
     private val shopListDao = AppDatabase.getInstance(application).shopListDao()
     private val mapper = ShopListMapper()
 
-    override fun addShopItem(shopItem: ShopItem) {
-        shopListDao.addShopItem(mapper.mapToEntityToDbModel(shopItem))
+    override suspend fun addShopItem(shopItem: ShopItem) {
+       coroutineScope {
+           shopListDao.addShopItem(mapper.mapToEntityToDbModel(shopItem))
+       }
     }
 
-    override fun deleteShopItem(shopItem: ShopItem) {
+    override suspend fun deleteShopItem(shopItem: ShopItem) {
 
         shopListDao.deleteShopItem(shopItem.id)
     }
 
-    override fun editShopItem(shopItem: ShopItem) {
+    override suspend fun editShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.mapToEntityToDbModel(shopItem))
     }
 
-    override fun getShopItem(shopItemId: Int): ShopItem {
+    override suspend fun getShopItem(shopItemId: Int): ShopItem {
         val item = shopListDao.getShopItem(shopItemId)
         return mapper.mapToModelToEntity(item)
     }

@@ -39,7 +39,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:hint="count"
-                android:text="@{String.valueOf(shopItem.id)}"
+                android:text="@{String.valueOf(shopItem.count)}"
                 android:textColor="@color/white"
 
                 android:textSize="20sp" />
