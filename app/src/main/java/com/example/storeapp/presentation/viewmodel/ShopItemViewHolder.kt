@@ -1,4 +1,4 @@
-package com.example.storeapp.presentation
+package com.example.storeapp.presentation.viewmodel
 
 import android.view.View
 import android.widget.TextView

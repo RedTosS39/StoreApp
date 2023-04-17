@@ -1,4 +1,4 @@
-package com.example.storeapp.presentation
+package com.example.storeapp.presentation.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
 import com.example.storeapp.databinding.ActivityMainBinding
+import com.example.storeapp.presentation.viewmodel.MainViewModel
+import com.example.storeapp.presentation.adapters.ShopListAdapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
