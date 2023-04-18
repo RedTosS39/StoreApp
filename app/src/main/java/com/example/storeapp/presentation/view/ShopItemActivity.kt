@@ -16,7 +16,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop_item)
         parseIntent()
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             launchMode()
         }
     }
@@ -30,11 +30,13 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
             MODE_ADD -> {
                 ShopItemFragment.newInstanceAddItem()
             }
-            else -> { throw RuntimeException("Unknown screen mode $screenMode") }
+            else -> {
+                throw RuntimeException("Unknown screen mode $screenMode")
+            }
         }
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.shop_item_container, fragment)
-                .commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .commit()
     }
 
     private fun parseIntent() {
@@ -72,13 +74,12 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
             val intent = Intent(context, ShopItemActivity::class.java)
             intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
             intent.putExtra(EXTRA_SHOP_ITEM_ID, shopItemId)
-
             return intent
         }
     }
 
     override fun onEditingFinished() {
         Toast.makeText(this@ShopItemActivity, "Success", Toast.LENGTH_SHORT).show()
-
+        onBackPressedDispatcher.onBackPressed()
     }
 }

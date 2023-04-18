@@ -80,10 +80,10 @@ class ShopItemFragment : Fragment() {
             val name = binding.etName.text.toString()
             val count = binding.etCount.text.toString()
             viewModel.editShopItem(name, count)
-        }
 
-        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            onEditingFinishedListener.onEditingFinished()
+            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+                onEditingFinishedListener.onEditingFinished()
+            }
         }
     }
 
@@ -93,6 +93,11 @@ class ShopItemFragment : Fragment() {
             val name = binding.etName.text.toString()
             val count = binding.etCount.text.toString()
             viewModel.addShopItem(name, count)
+
+            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+                onEditingFinishedListener.onEditingFinished()
+
+            }
         }
     }
 
@@ -115,7 +120,7 @@ class ShopItemFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetInputNameError()
+                viewModel.resetInputCountError()
             }
 
             override fun afterTextChanged(s: Editable?) {
