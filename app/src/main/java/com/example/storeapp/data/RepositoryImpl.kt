@@ -6,12 +6,13 @@ import androidx.lifecycle.Transformations
 import com.example.storeapp.domain.Repository
 import com.example.storeapp.domain.model.ShopItem
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
-class RepositoryImpl(application: Application) : Repository {
+class RepositoryImpl @Inject constructor(
+    private val shopListDao: ShopListDao,
+    private val mapper: ShopListMapper
 
-    private val shopListDao = AppDatabase.getInstance(application).shopListDao()
-    private val mapper = ShopListMapper()
-
+) : Repository {
     override suspend fun addShopItem(shopItem: ShopItem) {
        coroutineScope {
            shopListDao.addShopItem(mapper.mapToEntityToDbModel(shopItem))
@@ -19,7 +20,6 @@ class RepositoryImpl(application: Application) : Repository {
     }
 
     override suspend fun deleteShopItem(shopItem: ShopItem) {
-
         shopListDao.deleteShopItem(shopItem.id)
     }
 
