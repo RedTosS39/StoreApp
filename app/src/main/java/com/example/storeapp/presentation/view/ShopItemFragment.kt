@@ -11,15 +11,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.storeapp.databinding.FragmentShopItemBinding
 import com.example.storeapp.domain.model.ShopItem
+import com.example.storeapp.presentation.app.StoreApplication
 import com.example.storeapp.presentation.viewmodel.ShopItemViewModel
+import com.example.storeapp.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
     private var _binding: FragmentShopItemBinding? = null
     private val binding: FragmentShopItemBinding
         get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as StoreApplication).component
+    }
+
     private val viewModel: ShopItemViewModel by lazy {
-        ViewModelProvider(this@ShopItemFragment)[ShopItemViewModel::class.java]
+        ViewModelProvider(this@ShopItemFragment, viewModelFactory)[ShopItemViewModel::class.java]
     }
 
     private var screenMode: String = MODE_UNKNOWN
@@ -27,6 +37,7 @@ class ShopItemFragment : Fragment() {
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
 
         if (context is OnEditingFinishedListener) {
@@ -52,6 +63,7 @@ class ShopItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
 
         addChangeTextListeners()
         launchRightMode()

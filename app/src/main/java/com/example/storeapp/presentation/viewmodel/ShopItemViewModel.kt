@@ -4,20 +4,21 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.storeapp.data.RepositoryImpl
 import com.example.storeapp.domain.AddShopItemUseCase
 import com.example.storeapp.domain.EditShopItemUseCase
-import com.example.storeapp.domain.Repository
 import com.example.storeapp.domain.model.GetShopItemUseCase
 import com.example.storeapp.domain.model.ShopItem
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: Repository = RepositoryImpl(application)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
-    private val getShopItemUseCase = GetShopItemUseCase(repository)
-    private val addShopItemUseCase = AddShopItemUseCase(repository)
+class ShopItemViewModel @Inject constructor(
+    private val editShopItemUseCase: EditShopItemUseCase,
+    private val getShopItemUseCase: GetShopItemUseCase,
+    private val addShopItemUseCase: AddShopItemUseCase,
+) : ViewModel() {
+
     private val _inputNameError = MutableLiveData<Boolean>()
     private val _inputCountError = MutableLiveData<Boolean>()
 
@@ -104,5 +105,4 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     private fun isFinished() {
         _shouldCloseScreen.postValue(Unit)
     }
-
 }

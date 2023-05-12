@@ -11,17 +11,30 @@ import com.example.storeapp.constats.Constants
 import com.example.storeapp.databinding.ActivityMainBinding
 import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.adapters.ShopListAdapter
+import com.example.storeapp.presentation.app.StoreApplication
+import com.example.storeapp.presentation.viewmodel.ViewModelFactory
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
+
+    private val component by lazy {
+        (application as StoreApplication).component
+    }
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel by lazy {
-        ViewModelProvider(this@MainActivity)[MainViewModel::class.java]
+        ViewModelProvider(this@MainActivity, viewModelFactory)[MainViewModel::class.java]
     }
 
     private lateinit var shopListAdapter: ShopListAdapter
     private var fragment: ShopItemFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -84,7 +97,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
             if (isOnePaneMode()) {
-                fragment = ShopItemFragment.newInstanceAddItem()
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {
