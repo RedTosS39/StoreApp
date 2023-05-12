@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var shopListAdapter: ShopListAdapter
-    private var fragment: ShopItemFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -97,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
             if (isOnePaneMode()) {
+
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {

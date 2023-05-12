@@ -13,6 +13,7 @@ class RepositoryImpl @Inject constructor(
     private val shopListDao: ShopListDao,
     private val mapper: ShopListMapper,
 ) : Repository {
+
     override suspend fun addShopItem(shopItem: ShopItem) {
         Log.d("AAAA", "addShopItem $shopItem ")
         coroutineScope {
@@ -31,17 +32,12 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun getShopItem(shopItemId: Int): ShopItem {
-        val item = shopListDao.getShopItem(shopItemId)
-        Log.d("AAAA", "getShopItem $item ")
-        return mapper.mapToModelToEntity(item)
+        val dbModel = shopListDao.getShopItem(shopItemId)
+        Log.d("AAAA", "getShopItem $dbModel ")
+        return mapper.mapToModelToEntity(dbModel)
     }
 
-//    override fun getShopList(): LiveData<List<ShopItem>> =
-//        Transformations.map(shopListDao.getShopList()) {
-//            mapper.mapListDbModelToListEntity(it)
-//        }
-
     override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList().map {
-        return@map mapper.mapListDbModelToListEntity(it)
+        mapper.mapListDbModelToListEntity(it)
     }
 }

@@ -12,13 +12,12 @@ import dagger.multibindings.IntoMap
 @Module
 interface ViewModelModule {
 
-    @StoreScope
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     fun bindsMainViewModel(mainViewModel: MainViewModel): ViewModel
 
-    @StoreScope
+
     @Binds
     @IntoMap
     @ViewModelKey(ShopItemViewModel::class)
