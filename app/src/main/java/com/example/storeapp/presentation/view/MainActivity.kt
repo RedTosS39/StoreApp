@@ -97,7 +97,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
             if (isOnePaneMode()) {
-                fragment = ShopItemFragment.newInstanceAddItem()
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else {

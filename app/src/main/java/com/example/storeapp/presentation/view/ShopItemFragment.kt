@@ -64,6 +64,7 @@ class ShopItemFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+
         addChangeTextListeners()
         launchRightMode()
     }
