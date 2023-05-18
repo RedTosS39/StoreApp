@@ -1,5 +1,7 @@
 package com.example.storeapp.presentation.view
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,18 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.storeapp.MyBroadcastReceivers
 import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
 import com.example.storeapp.databinding.ActivityMainBinding
-import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.adapters.ShopListAdapter
 import com.example.storeapp.presentation.app.StoreApplication
+import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var binding: ActivityMainBinding
+    private val receiver = MyBroadcastReceivers()
 
     private val component by lazy {
         (application as StoreApplication).component
@@ -37,6 +41,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        val intentFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+            addAction(Intent.ACTION_BATTERY_LOW)
+            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
+        }
+        registerReceiver(receiver, intentFilter)
+
         setContentView(binding.root)
         setupRecyclerView()
         setupFab()
@@ -44,6 +56,11 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
 
@@ -119,6 +136,12 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private fun setupLongClickListener() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
+            Intent(MyBroadcastReceivers.ACTION_ADD_ITEM).apply {
+                putExtra(MyBroadcastReceivers.EXTRA_ADD, it.enabled)
+//                putExtra(MyBroadcastReceivers.EXTRA_NAME, it.name)
+                sendBroadcast(this)
+            }
+
         }
     }
 
