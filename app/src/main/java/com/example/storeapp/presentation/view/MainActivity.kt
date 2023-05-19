@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             addAction(Intent.ACTION_BATTERY_LOW)
             addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
         }
+
         registerReceiver(receiver, intentFilter)
 
         setContentView(binding.root)
@@ -110,7 +111,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
 
-
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
             if (isOnePaneMode()) {
@@ -136,12 +136,16 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private fun setupLongClickListener() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
-            Intent(MyBroadcastReceivers.ACTION_ADD_ITEM).apply {
-                putExtra(MyBroadcastReceivers.EXTRA_ADD, it.enabled)
-//                putExtra(MyBroadcastReceivers.EXTRA_NAME, it.name)
-                sendBroadcast(this)
+
+            val bundle = Bundle().apply {
+                putString(MyBroadcastReceivers.KEY_BROADCAST_NAME, it.name)
+                putBoolean(MyBroadcastReceivers.KEY_BROADCAST_ENABLED, it.enabled)
             }
 
+            Intent(MyBroadcastReceivers.ACTION_ADD_ITEM).apply {
+                putExtra(MyBroadcastReceivers.KEY_BROADCAST_BUNDLE, bundle)
+                sendBroadcast(this)
+            }
         }
     }
 

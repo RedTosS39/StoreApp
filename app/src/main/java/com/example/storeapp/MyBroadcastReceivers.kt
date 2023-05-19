@@ -19,15 +19,17 @@ class MyBroadcastReceivers : BroadcastReceiver() {
                 Toast.makeText(context, "ACTION_BATTERY_LOW", Toast.LENGTH_SHORT).show()
             }
 
-            ACTION_ADD_ITEM -> {
-                val state = intent.getBooleanExtra(EXTRA_ADD, false)
-                Toast.makeText(context, "$state", Toast.LENGTH_SHORT).show()
-                val name = intent.getStringExtra(EXTRA_NAME) ?: "Name"
-                when(state) {
-                    true -> {Toast.makeText(context, "$name $ADD_TO_BUCKET", Toast.LENGTH_SHORT).show()}
-                    false -> {Toast.makeText(context, "$name $DELETE_TO_BUCKET", Toast.LENGTH_SHORT).show()}
-                }
+            ACTION_ADD_ITEM-> {
+                val extras = intent.getBundleExtra(KEY_BROADCAST_BUNDLE)
+                val name = extras?.getString(KEY_BROADCAST_NAME)
+                val enabled = extras?.getBoolean(KEY_BROADCAST_ENABLED)
 
+                val status =  if(enabled == true) {
+                    ITEM_ADD
+                } else {
+                    ITEM_DELETE
+                }
+                Toast.makeText(context, "$name $status", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -35,11 +37,12 @@ class MyBroadcastReceivers : BroadcastReceiver() {
 
     companion object {
         private const val STATE = "STATE"
+        const val KEY_BROADCAST_BUNDLE = "KEY_BROADCAST_BUNDLE"
+        const val ACTION_ADD_ITEM = "ACTION_ADD_ITEM"
+        const val KEY_BROADCAST_NAME = "KEY_BROADCAST_NAME"
+        const val KEY_BROADCAST_ENABLED = "KEY_BROADCAST_ENABLED"
 
-        private const val ADD_TO_BUCKET = "added to bucket"
-        private const val DELETE_TO_BUCKET = "deleted from bucket"
-        const val ACTION_ADD_ITEM = "ITEM"
-        const val EXTRA_ADD = "ITEM"
-        const val EXTRA_NAME = "ITEM"
+        private const val ITEM_ADD = "added to bucket"
+        private const val ITEM_DELETE="deleted from bucket"
     }
 }
