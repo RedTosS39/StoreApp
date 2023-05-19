@@ -8,10 +8,10 @@ class ShopListMapper @Inject constructor() {
 
     fun mapToEntityToDbModel(item: ShopItem) =
         ShopItemDbModel(
-            item.id,
-            item.name,
-            item.count,
-            item.enabled
+            id = item.id,
+            name = item.name,
+            count = item.count,
+            enabled = item.enabled
         )
 
     fun mapToModelToEntity(item: ShopItemDbModel) =

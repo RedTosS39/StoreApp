@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    getShopListUseCase: GetShopListUseCase,
+    private val getShopListUseCase: GetShopListUseCase,
     private val deleteShopItemUseCase: DeleteShopItemUseCase,
     private val editShopItemUseCase: EditShopItemUseCase
     ) : ViewModel() {

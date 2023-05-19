@@ -1,7 +1,5 @@
 package com.example.storeapp.presentation.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -95,14 +93,14 @@ class ShopItemViewModel @Inject constructor(
     }
 
     fun resetInputNameError() {
-        _inputNameError.postValue(false)
+        _inputNameError.value = false
     }
 
     fun resetInputCountError() {
-        _inputCountError.postValue(false)
+        _inputCountError.value = false
     }
 
     private fun isFinished() {
-        _shouldCloseScreen.postValue(Unit)
+        _shouldCloseScreen.value = Unit
     }
 }

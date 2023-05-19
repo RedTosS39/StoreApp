@@ -17,9 +17,11 @@ import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
+    private lateinit var viewModel: ShopItemViewModel
     private var _binding: FragmentShopItemBinding? = null
     private val binding: FragmentShopItemBinding
         get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -28,13 +30,9 @@ class ShopItemFragment : Fragment() {
         (requireActivity().application as StoreApplication).component
     }
 
-    private val viewModel: ShopItemViewModel by lazy {
-        ViewModelProvider(this@ShopItemFragment, viewModelFactory)[ShopItemViewModel::class.java]
-    }
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
-    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -43,7 +41,7 @@ class ShopItemFragment : Fragment() {
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
-            throw RuntimeException("Activity must implement listener")
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
         }
     }
 
@@ -61,14 +59,19 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this@ShopItemFragment,
+            viewModelFactory)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
-
         addChangeTextListeners()
         launchRightMode()
+        observeViewModel()
     }
-
+    private fun observeViewModel() {
+        viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+            onEditingFinishedListener.onEditingFinished()
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
@@ -83,19 +86,15 @@ class ShopItemFragment : Fragment() {
 
     private fun launchEditMode() {
         viewModel.getShopItem(shopItemId)
-//        viewModel.shopItem.observe(viewLifecycleOwner) {
-//            binding.etName.setText(it.name)
-//            binding.etCount.setText(it.count.toString())
-//        }
 
         binding.buttonSave.setOnClickListener {
             val name = binding.etName.text.toString()
             val count = binding.etCount.text.toString()
             viewModel.editShopItem(name, count)
 
-            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-                onEditingFinishedListener.onEditingFinished()
-            }
+//            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+//                onEditingFinishedListener.onEditingFinished()
+//            }
         }
     }
 
@@ -106,10 +105,10 @@ class ShopItemFragment : Fragment() {
             val count = binding.etCount.text.toString()
             viewModel.addShopItem(name, count)
 
-            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-                onEditingFinishedListener.onEditingFinished()
-
-            }
+//            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
+//                onEditingFinishedListener.onEditingFinished()
+//
+//            }
         }
     }
 

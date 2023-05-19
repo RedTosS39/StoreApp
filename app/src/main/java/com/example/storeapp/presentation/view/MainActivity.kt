@@ -1,23 +1,28 @@
 package com.example.storeapp.presentation.view
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.storeapp.MyBroadcastReceivers
 import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
 import com.example.storeapp.databinding.ActivityMainBinding
-import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.adapters.ShopListAdapter
 import com.example.storeapp.presentation.app.StoreApplication
+import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var binding: ActivityMainBinding
+    private val receiver = MyBroadcastReceivers()
 
     private val component by lazy {
         (application as StoreApplication).component
@@ -31,12 +36,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var shopListAdapter: ShopListAdapter
-    private var fragment: ShopItemFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        val intentFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+            addAction(Intent.ACTION_BATTERY_LOW)
+            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
+        }
+
+        registerReceiver(receiver, intentFilter)
+
         setContentView(binding.root)
         setupRecyclerView()
         setupFab()
@@ -44,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.shopList.observe(this@MainActivity) {
             shopListAdapter.submitList(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(receiver)
     }
 
 
@@ -93,7 +111,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun setupFab() {
         binding.floatingActionButton.setOnClickListener {
             if (isOnePaneMode()) {
@@ -119,10 +136,25 @@ class MainActivity : AppCompatActivity() {
     private fun setupLongClickListener() {
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
+
+            val bundle = Bundle().apply {
+                putString(MyBroadcastReceivers.KEY_BROADCAST_NAME, it.name)
+                putBoolean(MyBroadcastReceivers.KEY_BROADCAST_ENABLED, it.enabled)
+            }
+
+            Intent(MyBroadcastReceivers.ACTION_ADD_ITEM).apply {
+                putExtra(MyBroadcastReceivers.KEY_BROADCAST_BUNDLE, bundle)
+                sendBroadcast(this)
+            }
         }
     }
 
     private fun setMaxRecycledViews(viewType: Int) {
         binding.recycler.recycledViewPool.setMaxRecycledViews(viewType, Constants.MAX_POOL_SIZE)
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 }
