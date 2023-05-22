@@ -1,8 +1,11 @@
 package com.example.storeapp.presentation.view
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,6 +21,7 @@ import com.example.storeapp.presentation.app.StoreApplication
 import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -42,11 +46,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        val intentFilter = IntentFilter().apply {
-            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
-        }
-
-        registerReceiver(receiver, intentFilter)
+        setupBroadcastReceiver()
 
         setContentView(binding.root)
         setupRecyclerView()
@@ -60,6 +60,30 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(receiver)
+    }
+
+    private fun setupBroadcastReceiver() {
+        val intentFilter = IntentFilter().apply {
+            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
+        }
+        registerReceiver(receiver, intentFilter)
+    }
+
+    private fun setupProvider() {
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.example.storeapp/shop_items"),
+                null,
+                null,
+                null,
+                null,
+                null,
+            )
+
+            while (cursor?.moveToNext() == true) {
+                Log.d("ShopListProvider", "setupProvider: ${cursor.columnCount}")
+            }
+        }
     }
 
 
@@ -144,6 +168,8 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 putExtra(MyBroadcastReceivers.KEY_BROADCAST_BUNDLE, bundle)
                 sendBroadcast(this)
             }
+
+            setupProvider()
         }
     }
 
