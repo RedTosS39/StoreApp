@@ -9,15 +9,6 @@ class MyBroadcastReceivers : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         when (intent?.action) {
-            Intent.ACTION_AIRPLANE_MODE_CHANGED -> {
-                val state = intent.getBooleanExtra(STATE, false)
-                Toast.makeText(context,
-                    "ACTION_AIRPLANE_MODE_CHANGED_TO: $state",
-                    Toast.LENGTH_SHORT).show()
-            }
-            Intent.ACTION_BATTERY_LOW -> {
-                Toast.makeText(context, "ACTION_BATTERY_LOW", Toast.LENGTH_SHORT).show()
-            }
 
             ACTION_ADD_ITEM-> {
                 val extras = intent.getBundleExtra(KEY_BROADCAST_BUNDLE)
