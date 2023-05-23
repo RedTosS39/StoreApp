@@ -1,12 +1,12 @@
 package com.example.storeapp.data
 
-import android.app.Application
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
+import com.example.storeapp.domain.model.ShopItem
 import com.example.storeapp.presentation.app.StoreApplication
 import javax.inject.Inject
 
@@ -18,6 +18,9 @@ class ShopListProvider : ContentProvider() {
 
     @Inject
     lateinit var shopListDao: ShopListDao
+
+    @Inject
+    lateinit var mapper: ShopListMapper
 
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
         // /* - when string
@@ -53,11 +56,38 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                if (values == null) return null
+                val id = values.getAsInteger(ID)
+                val name = values.getAsString(NAME)
+                val count = values.getAsInteger(COUNT)
+                val enabled = values.getAsBoolean(ENABLE)
+
+                val shopItem = ShopItem(
+                    name = name,
+                    count = count,
+                    enabled = enabled,
+                    id = id
+                )
+
+                shopListDao.addShopItemSync(mapper.mapToEntityToDbModel(shopItem))
+            }
+
+        }
+        return null
     }
 
+
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        TODO("Not yet implemented")
+        when (uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                val id = selectionArgs?.get(0)?.toInt() ?: -1
+                return shopListDao.deleteShopItemSync(id)
+            }
+        }
+
+        return 0
     }
 
     override fun update(
@@ -71,5 +101,10 @@ class ShopListProvider : ContentProvider() {
 
     companion object {
         const val GET_SHOP_ITEMS_QUERY = 0
+        const val URI = "content://com.example.storeapp/shop_items"
+        const val ID = "id"
+        const val NAME = "name"
+        const val COUNT = "count"
+        const val ENABLE = "enabled"
     }
 }

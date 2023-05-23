@@ -1,6 +1,8 @@
 package com.example.storeapp.presentation.view
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +17,7 @@ import com.example.storeapp.presentation.app.StoreApplication
 import com.example.storeapp.presentation.viewmodel.ShopItemViewModel
 import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
     private lateinit var viewModel: ShopItemViewModel
@@ -67,11 +70,13 @@ class ShopItemFragment : Fragment() {
         launchRightMode()
         observeViewModel()
     }
+
     private fun observeViewModel() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener.onEditingFinished()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
@@ -101,14 +106,23 @@ class ShopItemFragment : Fragment() {
     private fun launchAddMode() {
         binding.buttonSave.setOnClickListener {
 
-            val name = binding.etName.text.toString()
-            val count = binding.etCount.text.toString()
-            viewModel.addShopItem(name, count)
+//            val name = binding.etName.text.toString()
+//            val count = binding.etCount.text.toString()
+//            viewModel.addShopItem(name, count)
 
-//            viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-//                onEditingFinishedListener.onEditingFinished()
-//
-//            }
+            thread {
+                requireContext().contentResolver.insert(
+                    Uri.parse("content://com.example.storeapp/shop_items"),
+                    ContentValues().apply {
+                        put("id", 0)
+                        put("name", binding.etName.text.toString())
+                        put("count", binding.etCount.text.toString().toInt())
+                        put("enabled", true)
+
+                    }
+                )
+            }
+
         }
     }
 
