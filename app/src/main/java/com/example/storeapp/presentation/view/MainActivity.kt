@@ -1,8 +1,11 @@
 package com.example.storeapp.presentation.view
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,12 +15,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.storeapp.MyBroadcastReceivers
 import com.example.storeapp.R
 import com.example.storeapp.constats.Constants
+import com.example.storeapp.data.ShopListProvider.Companion.COUNT
+import com.example.storeapp.data.ShopListProvider.Companion.ENABLE
+import com.example.storeapp.data.ShopListProvider.Companion.ID
+import com.example.storeapp.data.ShopListProvider.Companion.NAME
+import com.example.storeapp.data.ShopListProvider.Companion.URI
 import com.example.storeapp.databinding.ActivityMainBinding
+import com.example.storeapp.domain.model.ShopItem
 import com.example.storeapp.presentation.adapters.ShopListAdapter
 import com.example.storeapp.presentation.app.StoreApplication
 import com.example.storeapp.presentation.viewmodel.MainViewModel
 import com.example.storeapp.presentation.viewmodel.ViewModelFactory
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -42,13 +52,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
-        val intentFilter = IntentFilter().apply {
-            addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
-            addAction(Intent.ACTION_BATTERY_LOW)
-            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
-        }
-
-        registerReceiver(receiver, intentFilter)
+        setupBroadcastReceiver()
 
         setContentView(binding.root)
         setupRecyclerView()
@@ -62,6 +66,44 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(receiver)
+    }
+
+    private fun setupBroadcastReceiver() {
+        val intentFilter = IntentFilter().apply {
+            addAction(MyBroadcastReceivers.ACTION_ADD_ITEM)
+        }
+        registerReceiver(receiver, intentFilter)
+    }
+
+    private fun setupProvider() {
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse(URI),
+                null,
+                null,
+                null,
+                null,
+                null,
+            )
+
+            while (cursor?.moveToNext() == true) {
+                val info: (String) -> Int = { cursor.getColumnIndexOrThrow(it) }
+                val id = cursor.getInt(info(ID))
+                val name = cursor.getString(info(NAME))
+                val count = cursor.getInt(info(COUNT))
+                val enabled = cursor.getInt(info(ENABLE)) > 0
+                val shopItem = ShopItem(
+                    name = name,
+                    count = count,
+                    enabled = enabled,
+                    id = id
+                )
+                Log.d("MainActivity", shopItem.toString())
+            }
+
+            cursor?.close()
+        }
+
     }
 
 
@@ -103,7 +145,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val currentItem = shopListAdapter.currentList[viewHolder.adapterPosition]
-                viewModel.deleteShopItem(currentItem)
+//                viewModel.deleteShopItem(currentItem)
+                thread {
+                    contentResolver.delete(
+                        Uri.parse(URI),
+                        null,
+                        arrayOf(currentItem.id.toString())
+                    )
+                }
+
             }
         }
         val itemTouchHelper = ItemTouchHelper(callback)
@@ -146,6 +196,8 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 putExtra(MyBroadcastReceivers.KEY_BROADCAST_BUNDLE, bundle)
                 sendBroadcast(this)
             }
+
+            setupProvider()
         }
     }
 
@@ -156,5 +208,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     override fun onEditingFinished() {
         Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
+    }
+
+    companion object {
+
+
     }
 }

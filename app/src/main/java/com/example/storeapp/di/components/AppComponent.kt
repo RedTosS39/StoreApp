@@ -1,6 +1,7 @@
 package com.example.storeapp.di.components
 
 import android.app.Application
+import com.example.storeapp.data.ShopListProvider
 import com.example.storeapp.di.modules.DataModule
 import com.example.storeapp.di.modules.ViewModelModule
 import com.example.storeapp.di.qualificators.StoreScope
@@ -17,6 +18,7 @@ import dagger.Component
 interface AppComponent {
 
     fun inject(activity: MainActivity)
+    fun inject(provider: ShopListProvider)
 
     fun inject(fragment: ShopItemFragment)
 
